@@ -27,7 +27,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-avg_{$column}"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($column) {
                     return parent::avg($column);
                 }
@@ -43,7 +43,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-count"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($columns) {
                     return parent::count($columns);
                 }
@@ -59,7 +59,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-cursor"),
-                $cacheTime,
+                $this->cacheTime,
                 function () {
                     return collect(parent::cursor());
                 }
@@ -86,7 +86,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey($columns, $id),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($id, $columns) {
                     return parent::find($id, $columns);
                 }
@@ -102,7 +102,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey($columns, null, '-first'),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($columns) {
                     return parent::first($columns);
                 }
@@ -118,7 +118,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey($columns),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($columns) {
                     return parent::get($columns);
                 }
@@ -134,7 +134,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-max_{$column}"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($column) {
                     return parent::max($column);
                 }
@@ -150,7 +150,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-min_{$column}"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($column) {
                     return parent::min($column);
                 }
@@ -167,7 +167,7 @@ class CachedBuilder extends EloquentBuilder
         $cacheKey = $this->makeCacheKey([$column], null, $keyDifferentiator);
 
         return $this->cache($this->makeCacheTags())
-            ->remember($cacheKey, $cacheTime, function () use ($column, $key) {
+            ->remember($cacheKey, $this->cacheTime, function () use ($column, $key) {
                 return parent::pluck($column, $key);
             });
     }
@@ -181,7 +181,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-sum_{$column}"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($column) {
                     return parent::sum($column);
                 }
@@ -197,7 +197,7 @@ class CachedBuilder extends EloquentBuilder
         return $this->cache($this->makeCacheTags())
             ->remember(
                 $this->makeCacheKey(['*'], null, "-value_{$column}"),
-                $cacheTime,
+                $this->cacheTime,
                 function () use ($column) {
                     return parent::value($column);
                 }
