@@ -15,7 +15,11 @@ abstract class CachedModel extends Model
 {
     use Cachable;
 
-    protected $cacheTime = 30;
+    protected $cacheTime = 60;
+    protected $disableFlushOnCreate = false;
+    protected $disableFlushOnDelete = false;
+    protected $disableFlushOnSave = false;
+    protected $disableFlushOnUpdate = false;
 
     public function newEloquentBuilder($query)
     {
@@ -36,19 +40,27 @@ abstract class CachedModel extends Model
         $instance = new $class;
 
         static::created(function () use ($instance) {
-            $instance->flushCache();
+            if (!$instance->disableFlushOnCreate) {
+                $instance->flushCache();
+            }
         });
 
         static::deleted(function () use ($instance) {
-            $instance->flushCache();
+            if (!$instance->disableFlushOnDelete) {
+                $instance->flushCache();
+            }
         });
 
         static::saved(function () use ($instance) {
-            $instance->flushCache();
+            if (!$instance->disableFlushOnSave) {
+                $instance->flushCache();
+            }
         });
 
         static::updated(function () use ($instance) {
-            $instance->flushCache();
+            if (!$instance->disableFlushOnUpdate) {
+                $instance->flushCache();
+            }
         });
     }
 
