@@ -15,6 +15,8 @@ abstract class CachedModel extends Model
 {
     use Cachable;
 
+    protected $cacheTime = 30;
+
     public function newEloquentBuilder($query)
     {
         if (session('genealabs-laravel-model-caching-is-disabled')) {
@@ -23,7 +25,7 @@ abstract class CachedModel extends Model
             return new EloquentBuilder($query);
         }
 
-        return new Builder($query);
+        return new Builder($query, $cacheTime);
     }
 
     public static function boot()
@@ -58,7 +60,7 @@ abstract class CachedModel extends Model
         $key = $instance->makeCacheKey();
 
         return $instance->cache($tags)
-            ->rememberForever($key, function () use ($columns) {
+            ->remember($key, $cacheTime, function () use ($columns) {
                 return parent::all($columns);
             });
     }
