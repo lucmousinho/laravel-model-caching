@@ -31,7 +31,12 @@ class CacheKey
         $key .= $this->getOffsetClause();
         $key .= $this->getLimitClause();
         $key .= $keyDifferentiator;
-dump($key);
+        
+        if (config('laravel-model-caching.debug'))
+        {
+            dump($key);
+        }
+        
         $key = sha1($key);
 
         return $key;
