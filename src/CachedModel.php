@@ -25,7 +25,7 @@ abstract class CachedModel extends Model
             return new EloquentBuilder($query);
         }
 
-        return new Builder($query, $cacheTime);
+        return new Builder($query, $this->cacheTime);
     }
 
     public static function boot()
