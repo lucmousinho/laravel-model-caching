@@ -72,7 +72,7 @@ abstract class CachedModel extends Model
         $key = $instance->makeCacheKey();
 
         return $instance->cache($tags)
-            ->remember($key, $cacheTime, function () use ($columns) {
+            ->remember($key, $this->cacheTime, function () use ($columns) {
                 return parent::all($columns);
             });
     }
