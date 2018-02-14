@@ -105,17 +105,19 @@ class CacheKey
 
     protected function getValuesClause(array $where = null) : string
     {
-        $value = is_array(array_get($where, 'values'))
-            ? '_' . implode('_', $where['values'])
-            : '';
-
-        if (! $value) {
-            $value = is_array(array_get($this->query->bindings, 'where'))
-                ? implode('_', array_get($this->query->bindings, 'where'))
-                : '';
+        if (in_array($where['type'], ['NotNull'])) {
+            return '';
         }
 
-        return $value;
+        $values = is_array(array_get($where, 'values'))
+            ? implode('_', $where['values'])
+            : '';
+
+        if (! $values && $this->query->bindings['where'] ?? false) {
+            $values = implode('_', $this->query->bindings['where']);
+        }
+
+        return '_' . $values;
     }
 
     protected function getWhereClauses(array $wheres = []) : string
@@ -166,7 +168,6 @@ class CacheKey
         }
 
         $value = $this->getTypeClause($where);
-        $value .= "_" . array_get($where, 'value');
         $value .= $this->getValuesClause($where);
 
         return "{$carry}-{$where['column']}_{$value}";
