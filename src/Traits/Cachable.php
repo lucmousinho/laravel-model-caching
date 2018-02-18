@@ -128,6 +128,6 @@ trait Cachable
             return new EloquentBuilder($query);
         }
 
-        return new CachedBuilder($query, $this->cacheTime);
+        return new CachedBuilder($query);
     }
 }

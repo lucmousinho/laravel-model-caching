@@ -10,8 +10,6 @@ class CachedBuilder extends EloquentBuilder
 {
     use Cachable;
 
-    protected $cacheTime;
-
     public function __construct($query, $cacheTime)
     {
         $this->cacheTime = $cacheTime;
