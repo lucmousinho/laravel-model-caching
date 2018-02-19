@@ -43,16 +43,16 @@ class FlushTest extends UnitTestCase
     public function testGivenModelIsFlushed()
     {
         $authors = (new Author)->all();
-        $key = sha1('genealabslaravelmodelcachingtestsfixturesauthor');
-        $tags = ['genealabslaravelmodelcachingtestsfixturesauthor'];
+        $key = sha1('genealabs:laravel-model-caching:genealabslaravelmodelcachingtestsfixturesauthor');
+        $tags = ['genealabs:laravel-model-caching:genealabslaravelmodelcachingtestsfixturesauthor'];
 
         $cachedResults = cache()
             ->tags($tags)
-            ->get($key);
+            ->get($key)['value'];
         $result = $this->artisan('modelCache:flush', ['--model' => Author::class]);
         $flushedResults = cache()
             ->tags($tags)
-            ->get($key);
+            ->get($key)['value'];
 
         $this->assertEquals($authors, $cachedResults);
         $this->assertEmpty($flushedResults);
@@ -62,22 +62,22 @@ class FlushTest extends UnitTestCase
     public function testGivenModelWithRelationshipIsFlushed()
     {
         $authors = (new Author)->with('books')->get();
-        $key = sha1('genealabslaravelmodelcachingtestsfixturesauthor-books');
+        $key = sha1('genealabs:laravel-model-caching:genealabslaravelmodelcachingtestsfixturesauthor-books');
         $tags = [
-            'genealabslaravelmodelcachingtestsfixturesauthor',
-            'genealabslaravelmodelcachingtestsfixturesbook',
+            'genealabs:laravel-model-caching:genealabslaravelmodelcachingtestsfixturesauthor',
+            'genealabs:laravel-model-caching:genealabslaravelmodelcachingtestsfixturesbook',
         ];
 
         $cachedResults = cache()
             ->tags($tags)
-            ->get($key);
+            ->get($key)['value'];
         $result = $this->artisan(
             'modelCache:flush',
             ['--model' => Author::class]
         );
         $flushedResults = cache()
             ->tags($tags)
-            ->get($key);
+            ->get($key)['value'];
 
         $this->assertEquals($authors, $cachedResults);
         $this->assertEmpty($flushedResults);

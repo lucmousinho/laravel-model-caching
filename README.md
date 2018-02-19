@@ -26,6 +26,8 @@ relationships. This package is an attempt to address those requirements.
 -   PHP >= 7.1.3
 -   Laravel >= 5.5
 
+[![installation guide cover](https://user-images.githubusercontent.com/1791050/36356190-fc1982b2-14a2-11e8-85ed-06f8e3b57ae8.png)](https://vimeo.com/256318402)
+
 ## Installation
 ```
 composer require genealabs/laravel-model-caching
@@ -63,6 +65,37 @@ abstract class BaseModel
 {
     use Cachable;
     //
+}
+```
+
+### Optional Cache Key Prefix
+Thanks to @lucian-dragomir for suggesting this feature! You can use cache key
+prefixing to keep cache entries separate for multi-tenant applications. For this
+it is recommended to add the Cachable trait to a base model, then set the cache
+key prefix config value there.
+
+**Note that the config setting is included before the parent method is called,
+so that the setting is available in the parent as well.**
+
+Here's is an example:
+```php
+<?php namespace GeneaLabs\LaravelModelCaching\Tests\Fixtures;
+
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class BaseModel extends Model
+{
+    use Cachable;
+
+    public function __construct($attributes = [])
+    {
+        config(['genealabs:laravel-model-caching' => 'test-prefix']);
+
+        parent::__construct($attributes);
+    }
 }
 ```
 

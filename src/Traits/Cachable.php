@@ -11,6 +11,7 @@ use GeneaLabs\LaravelModelCaching\CachedBuilder;
 trait Cachable
 {
     protected $isCachable = true;
+    protected static $isCachableKey = 'genealabs:laravel-model-caching:is-disabled';
 
     protected $cacheTime = 60;
     protected $disableFlushOnCreate = false;
@@ -27,19 +28,29 @@ trait Cachable
         }
 
         if (is_subclass_of($cache->getStore(), TaggableStore::class)) {
-            if (is_a($this, CachedModel::class)) {
-                array_push($tags, str_slug(get_called_class()));
-            }
-
+            $tags = $this->addTagsWhenCalledFromCachedBuilder($tags);
             $cache = $cache->tags($tags);
         }
 
         return $cache;
     }
 
+    protected function addTagsWhenCalledFromCachedBuilder(array $tags) : array
+    {
+        $usesCachableTrait = collect(class_uses($this))
+            ->contains("GeneaLabs\LaravelModelCaching\Traits\Cachable");
+
+        if (! $usesCachableTrait) {
+            array_push($tags, str_slug(get_called_class()));
+        }
+
+        return $tags;
+    }
+
     public function disableCache()
     {
-        session(['genealabs-laravel-model-caching-is-disabled' => true]);
+        cache()->forever(self::$isCachableKey, true);
+
         $this->isCachable = false;
 
         return $this;
@@ -105,7 +116,7 @@ trait Cachable
 
     public static function all($columns = ['*'])
     {
-        if (session('genealabs-laravel-model-caching-is-disabled')) {
+        if (! cache()->get(self::$isCachableKey)) {
             return parent::all($columns);
         }
 
@@ -122,8 +133,8 @@ trait Cachable
 
     public function newEloquentBuilder($query)
     {
-        if (session('genealabs-laravel-model-caching-is-disabled')) {
-            session()->forget('genealabs-laravel-model-caching-is-disabled');
+        if (cache()->get(self::$isCachableKey)) {
+            cache()->forget(self::$isCachableKey);
 
             return new EloquentBuilder($query);
         }
